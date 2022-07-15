@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, setCategory } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -7,166 +7,154 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 
+import "./index.css";
+import Select from "@material-ui/core/Select"
+import FormControl from "@material-ui/core/FormControl"
+import InputLabel from "@material-ui/core/InputLabel"
+import TextField from "@material-ui/core/TextField"
+import Radio from "@material-ui/core/Radio"
+import RadioGroup from "@material-ui/core/RadioGroup"
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormLabel from '@material-ui/core/FormLabel'
 
-//Dev mode
-const serverURL = ""; //enable for dev mode
+import Button from "@material-ui/core/Button"
+import MenuItem from '@material-ui/core/MenuItem'
+const serverURL = ""
 
-//Deployment mode instructions
-//const serverURL = "http://ov-research-4.uwaterloo.ca:PORT"; //enable for deployed mode; Change PORT to the port number given to you;
-//To find your port number: 
-//ssh to ov-research-4.uwaterloo.ca and run the following command: 
-//env | grep "PORT"
-//copy the number only and paste it in the serverURL in place of PORT, e.g.: const serverURL = "http://ov-research-4.uwaterloo.ca:3000";
+const Review = ({addReview}) => {
+ 
+  const [rating, setSelectedRating] = useState("")
 
-const fetch = require("node-fetch");
-
-const opacityValue = 0.9;
-
-const theme = createTheme({
-  palette: {
-    type: 'dark',
-    background: {
-      default: "#000000"
-    },
-    primary: {
-      main: "#52f1ff",
-    },
-    secondary: {
-      main: "#b552f7",
-    },
-  },
-});
-
-const styles = theme => ({
-  root: {
-    body: {
-      backgroundColor: "#000000",
-      opacity: opacityValue,
-      overflow: "hidden",
-    },
-  },
-  mainMessage: {
-    opacity: opacityValue,
-  },
-
-  mainMessageContainer: {
-    marginTop: "20vh",
-    marginLeft: theme.spacing(20),
-    [theme.breakpoints.down('xs')]: {
-      marginLeft: theme.spacing(4),
-    },
-  },
-  paper: {
-    overflow: "hidden",
-  },
-  message: {
-    opacity: opacityValue,
-    maxWidth: 250,
-    paddingBottom: theme.spacing(2),
-  },
-
-});
-
-
-class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      userID: 1,
-      mode: 0
-    }
-  };
-
-  componentDidMount() {
-    //this.loadUserSettings();
-  }
-
-
-  loadUserSettings() {
-    this.callApiLoadUserSettings()
-      .then(res => {
-        //console.log("loadUserSettings returned: ", res)
-        var parsed = JSON.parse(res.express);
-        console.log("loadUserSettings parsed: ", parsed[0].mode)
-        this.setState({ mode: parsed[0].mode });
-      });
-  }
-
-  callApiLoadUserSettings = async () => {
-    const url = serverURL + "/api/loadUserSettings";
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        //authorization: `Bearer ${this.state.token}`
-      },
-      body: JSON.stringify({
-        userID: this.state.userID
-      })
-    });
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
-    console.log("User settings: ", body);
-    return body;
-  }
-
-  render() {
-    const { classes } = this.props;
-
-
-
-    const mainMessage = (
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        justify="flex-start"
-        alignItems="flex-start"
-        style={{ minHeight: '100vh' }}
-        className={classes.mainMessageContainer}
-      >
-        <Grid item>
-
-          <Typography
-            variant={"h3"}
-            className={classes.mainMessage}
-            align="flex-start"
-          >
-            {this.state.mode === 0 ? (
-              <React.Fragment>
-                Welcome to MSci245!
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                Welcome back!
-              </React.Fragment>
-            )}
-          </Typography>
-
-        </Grid>
-      </Grid>
-    )
-
-
-    return (
-      <MuiThemeProvider theme={theme}>
-        <div className={classes.root}>
-          <CssBaseline />
-          <Paper
-            className={classes.paper}
-          >
-            {mainMessage}
-          </Paper>
-
-        </div>
-      </MuiThemeProvider>
-    );
-  }
 }
+export default function Home(){
+  const [movies, setMovies ] = React.useState([])
+  const [userId, setUserId] = React.useState(1)
+  const [review, setReview] = React.useState({userId})
 
-Home.propTypes = {
-  classes: PropTypes.object.isRequired
-};
+  React.useEffect(() => {
+    
+    async function getMovies(){
+      console.log('get movies')
+      const url = serverURL + "/api/getMovies"
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
 
-export default withStyles(styles)(Home);
+        }
+      })
+      const body = await res.json()
+      console.log(body.express)
+      setMovies(body)
+    }
+    getMovies()
+    
+
+  }, [])
+  async function submit(){
+    const url = serverURL + "/api/addMovie"
+          // console.log(review)
+          const body = JSON.stringify(review)
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body : body
+            
+          })
+
+          console.log(res)
+  }
+  function changeMovie(e){
+    const currentRev = review
+    currentRev.movie = e.target.value
+    setReview(currentRev)
+    console.log(currentRev)
+  }
+  function changeRating(e){
+    const currentRev = review
+    currentRev.rating = e.target.value
+    setReview(currentRev)
+    console.log(currentRev)
+  }
+  function changeReview(e){
+    const currentRev = review
+    currentRev.review = e.target.value
+    setReview(currentRev)
+    console.log(currentRev)
+  }
+  function changeTitle(e){
+    const currentRev = review
+    currentRev.title = e.target.value
+    setReview(currentRev)
+    console.log(currentRev)
+  }
+  return(
+  <div>
+    <Grid>
+      
+      <Grid item xs = {12}>
+        <Typography variant = 'h3'>
+          Review a movie
+        </Typography>
+      </Grid>
+
+      <Grid item>
+        <FormControl fullWidth>
+          <InputLabel> Movie Choices </InputLabel>
+          <Select
+            value = {"movieChoice"}
+            Label = "Movie Choice"
+            onChange={changeMovie}
+            >
+              {
+                movies.map((movie) => {
+                  return <MenuItem value={movie.id}>{movie.name}</MenuItem>
+
+                })
+              }
+            </Select>
+        </FormControl>
+      </Grid>
+
+      <Grid item>
+        <FormControl noValidate autoComplete = "off">
+          <TextField
+          label = "Enter Review Title"
+          fullWidth
+          onChange={changeTitle}
+          /> 
+        </FormControl>
+      </Grid>
+      <Grid item>
+        <FormControl noValidate autoComplete = "off">
+          <TextField
+          label = "Enter Review below"
+          multiLine
+          fullWidth
+          inputProps = {{ maxLength: 200 }}
+          onChange={changeReview}
+          /> 
+        </FormControl>
+      </Grid>
+      <Grid item>
+        <FormControl>
+          <FormLabel>Enter your overall rating out of 5</FormLabel>
+          <RadioGroup value ={"rating"} onChange = {(e) => changeRating(e)}>
+            <FormControlLabel value = '1' control={<Radio/>} label = '1'/> 
+            <FormControlLabel value = '2' control={<Radio/>} label = '2'/> 
+            <FormControlLabel value = '3' control={<Radio/>} label = '3'/> 
+            <FormControlLabel value = '4' control={<Radio/>} label = '4'/> 
+            <FormControlLabel value = '5' control={<Radio/>} label = '5'/> 
+          </RadioGroup>
+        </FormControl>
+      </Grid>
+      <Grid item>
+      <Button
+        onClick={submit}
+      >Submit</Button>
+      </Grid>
+    </Grid>
+  </div>
+  )
+}
