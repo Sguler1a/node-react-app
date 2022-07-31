@@ -1,14 +1,12 @@
-import React, { useState, setCategory } from 'react';
-import Grid from "@material-ui/core/Grid";
+import React from 'react';
 import Typography from "@material-ui/core/Typography";
 import { AppBar } from '@material-ui/core';
 import history from '../Navigation/history'
 import Link from '@material-ui/core/Link'
 
-
-export default function Landing(){
+export default function Search(){
     return(
-    <div  style={{ margin: '50px' }}>
+        <div  style={{ margin: '50px' }}>
         <AppBar position="static">
 
         <Link
@@ -75,7 +73,6 @@ export default function Landing(){
             MyPage
             </Typography>
         </Link>
-
         <Link
         color = 'inherit'
         style={{cursor:"pointer"}}
@@ -97,24 +94,8 @@ export default function Landing(){
             Search
             </Typography>
         </Link>
-
     </AppBar>
-        <Grid>
-        <Grid item xs = {12}>
-            <Typography variant = 'h2'>
-            Movie Bonanza
-            </Typography>
-        </Grid>
-        <Grid item xs = {12}>
-        <Typography variant = 'h3'>
-          Hi this is my movie review website.
-          Here you can leave reviews for movies
-          Search for movies 
-          And a little extra under my page 
-          hope its VERY NICE!
-        </Typography>
-      </Grid>
-    </Grid>
     </div>
     )
-}
+    
+} 

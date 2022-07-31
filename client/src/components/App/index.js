@@ -6,38 +6,20 @@ import {
 } from 'react-router-dom';
 
 import Home from '../Home';
+import Landing from '../Landing'
 import PrivateRoute from '../Navigation/PrivateRoute.js';
 
 
-
-class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      //
-    };
-  }
-
-  componentDidMount() {
-    //
-  }
-
-
-  componentWillUnmount() {
-    this.listener();
-  }
-
-
-  render() {
+const App =()=> {
+  
     return (
 	  <Router>
 	    <div>
-        <PrivateRoute exact path="/" component={Home}/>
+        <PrivateRoute exact path="/" component={Landing}/>
 	    </div>
 	  </Router>
-    );
-  }
+    )
 }
+
 
 export default App;
